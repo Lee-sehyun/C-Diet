@@ -1,44 +1,41 @@
 #include <stdio.h>
-#include <algorithm> 
-#include <vector>
 
-using namespace std;
 
-bool visit[100]; // 초기화를 해줘야 할 것 같아....
+int N; // 정점의 총 갯수
+
+int map_big[100][100], map_small[100][100], visit[100]; // 인접 행렬과 방문 여부를 나타내는 배열
 int count;
-vector<int> a[99]; // 큰 거
-vector<int> b[99]; // 작은 거 
 
-void dfs_a(int start){ 
-    if(visit[start]){ 
-        // 방문한경우 바로 빠져나옴 
-        return; 
-    } 
-    
-    visit[start] = true; // 방문 
+void dfs_big(int v)
+{
+    int i;
+    visit[v] = 1; // 정점 v를 방문했다고 표시
     count++;
-    
-    for(int i=0; i< a[start].size(); i++){ 
-        // 인접한 노드를 방문 
-        int x = a[start][i]; 
-        dfs_a(x); 
-    } 
+    for (i = 1; i <= N; i++)
+    {
+        // 정점 v와 정점 i가 연결되었고, 정점 i를 방문하지 않았다면
+        if (map_big[v][i] == 1 && !visit[i])
+        {
+            // 정점 i에서 다시 DFS를 시작한다
+            dfs_big(i); 
+        }
+    }
 }
 
-void dfs_b(int start){ 
-    if(visit[start]){ 
-        // 방문한경우 바로 빠져나옴 
-        return; 
-    } 
-    
-    visit[start] = true; // 방문 
+void dfs_small(int v)
+{
+    int i;
+    visit[v] = 1; // 정점 v를 방문했다고 표시
     count++;
-    
-    for(int i=0; i< a[start].size(); i++){ 
-        // 인접한 노드를 방문 
-        int x = a[start][i]; 
-        dfs_b(x); 
-    } 
+    for (i = 1; i <= N; i++)
+    {
+        // 정점 v와 정점 i가 연결되었고, 정점 i를 방문하지 않았다면
+        if (map_small[v][i] == 1 && !visit[i])
+        {
+            // 정점 i에서 다시 DFS를 시작한다
+            dfs_small(i); 
+        }
+    }
 }
 
 int main(void) {
@@ -47,33 +44,33 @@ int main(void) {
     // 깊이 우선 탐색을 이용해야할 것 같네
 
     //입력
-    int N, M;
+    int M;
     scanf("%d %d", &N, &M);
     int a, b;
     for (int i = 0 ; i < M ; i++){
         scanf("%d %d", &a, &b);
-        a[a].push_back(b);
-        b[b].push_back(a);
+        map_big[a][b] = 1; 
+        map_small[b][a] = 1; // 정점 v1과 정점 v2가 연결되었다고 표시
     }
     int N_count = 0;
 
     for (int i = 1 ; i <= N ; i++){
         count = 0;
         for (int j = 1 ; j <= N ; j++){
-            visit[j] = false; // 초기화
+            visit[j] = 0; // 초기화
         }
-        dfs_a(i);
-        if (count > N/2){
+        dfs_big(i);
+        if (count > N/2+1){
             N_count++;
             continue;
         }
 
         count = 0;
         for (int j = 1 ; j <= N ; j++){
-            visit[j] = false; // 초기화
+            visit[j] = 0; // 초기화
         }
-        dfs_b(i);
-        if (count > N/2){
+        dfs_small(i);
+        if (count > N/2+1){
             N_count++;
             continue;
         }
