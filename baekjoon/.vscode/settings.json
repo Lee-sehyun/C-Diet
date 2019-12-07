@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "chrono": "c",
+        "algorithm": "c",
+        "limits": "c",
+        "ratio": "c"
+    }
+}
